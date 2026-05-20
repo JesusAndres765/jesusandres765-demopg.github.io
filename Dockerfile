@@ -1,5 +1,13 @@
+# Etapa 1: compilar
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Etapa 2: correr
 FROM eclipse-temurin:21-jdk-jammy
+WORKDIR /app
 EXPOSE 8080
-# Esta línea es la que falta o debe ser exacta:
-COPY target/demopg-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+COPY --from=build /app/target/demopg-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
