@@ -1,40 +1,46 @@
 package com.postgres.demopg.models;
 
+import java.util.HashSet;
+import java.util.Set;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.validation.constraints.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Size(max = 50)
-    @Column(unique = true)
+    @Size(max = 20)
     private String username;
+
+    @NotBlank
+    @Size(max = 50)
+    @Email
+    private String email;
 
     @NotBlank
     @Size(max = 120)
     private String password;
 
-    @Size(max = 100)
-    private String email;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Tweet> tweets = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User() {}
 
-    public User(String username, String password, String email) {
+    public User(String username, String email, String password) {
         this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
     }
 
     public Long getId() { return id; }
@@ -49,6 +55,6 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public List<Tweet> getTweets() { return tweets; }
-    public void setTweets(List<Tweet> tweets) { this.tweets = tweets; }
+    public Set<Role> getRoles() { return roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }

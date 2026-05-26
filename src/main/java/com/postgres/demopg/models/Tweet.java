@@ -1,9 +1,7 @@
 package com.postgres.demopg.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "tweets")
@@ -18,52 +16,21 @@ public class Tweet {
     private String tweet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+    @JoinColumn(name = "posted_by", referencedColumnName = "id")
+    private User postedBy;
 
-    // Campo calculado para devolver solo el username en el JSON
-    @Transient
-    private String username;
+    public Tweet() {}
 
-    public Tweet() {
-    }
-
-    public Tweet(String tweet, User user) {
-        this.tweet = tweet;
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTweet() {
-        return tweet;
-    }
-
-    public void setTweet(String tweet) {
+    public Tweet(String tweet) {
         this.tweet = tweet;
     }
 
-    public User getUser() {
-        return user;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public String getTweet() { return tweet; }
+    public void setTweet(String tweet) { this.tweet = tweet; }
 
-    // Esto hace que el JSON incluya "username" aunque no sea columna en BD
-    public String getUsername() {
-        return user != null ? user.getUsername() : username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public User getPostedBy() { return postedBy; }
+    public void setPostedBy(User postedBy) { this.postedBy = postedBy; }
 }

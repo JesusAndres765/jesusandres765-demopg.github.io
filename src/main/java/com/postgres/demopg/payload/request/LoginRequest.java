@@ -1,9 +1,8 @@
-package com.postgres.demopg.payload;
+package com.postgres.demopg.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
-
     @NotBlank
     private String username;
 
